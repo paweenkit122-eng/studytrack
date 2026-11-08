@@ -1,0 +1,2 @@
+# Vercel only builds the frontend (repo root). The API deploys separately.
+server
