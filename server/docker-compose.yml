@@ -1,0 +1,24 @@
+# Spin up a local PostgreSQL for development:
+#   docker compose up -d
+# Then point DATABASE_URL in .env at it and run `npm run migrate:dev`.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: studytrack-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: studytrack
+      POSTGRES_PASSWORD: studytrack
+      POSTGRES_DB: studytrack
+    ports:
+      - '5432:5432'
+    volumes:
+      - studytrack-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U studytrack']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  studytrack-pgdata:
