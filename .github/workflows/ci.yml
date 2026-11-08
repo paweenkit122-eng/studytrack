@@ -1,0 +1,42 @@
+name: CI
+
+# Runs on every push to main and on every pull request.
+# The backend (server/) has its own workflow, so ignore changes there.
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['server/**']
+  pull_request:
+    paths-ignore: ['server/**']
+
+jobs:
+  build-and-test:
+    name: Type-check · Test · Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check (tsc)
+        run: npm run typecheck
+
+      - name: Unit & component tests (Vitest)
+        run: npm run test
+
+      - name: Production build
+        run: npm run build
+
+# Continuous Deployment:
+# Connect this repo to Vercel once (vercel.com → Import Project). Vercel then
+# auto-deploys every push to `main` to production and builds a unique preview
+# URL for every pull request — no secrets or extra workflow needed. The CI job
+# above is the quality gate that must stay green.
