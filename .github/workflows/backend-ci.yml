@@ -1,0 +1,54 @@
+name: Backend CI
+
+# Runs when backend code changes. Spins up a real PostgreSQL so the
+# integration tests (Supertest) run end-to-end, just like locally.
+on:
+  push:
+    branches: [main]
+    paths: ['server/**', '.github/workflows/backend-ci.yml']
+  pull_request:
+    paths: ['server/**', '.github/workflows/backend-ci.yml']
+
+jobs:
+  test:
+    name: Type-check · Test · Build (with PostgreSQL)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: studytrack
+          POSTGRES_PASSWORD: studytrack
+          POSTGRES_DB: studytrack
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U studytrack"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://studytrack:studytrack@localhost:5432/studytrack?schema=public
+      JWT_SECRET: ci-test-secret
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
+      - name: Type-check
+        run: npm run typecheck
+      - name: Test (unit + integration)
+        run: npm run test
+      - name: Build
+        run: npm run build
