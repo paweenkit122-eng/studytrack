@@ -1,0 +1,66 @@
+// Prisma schema — the single source of truth for the database.
+// `prisma migrate` turns this into SQL migrations; `prisma generate`
+// turns it into a fully type-safe client used in the code.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  /// bcrypt hash — never the plain password, never returned by the API.
+  password  String
+  createdAt DateTime @default(now())
+
+  subjects Subject[]
+  events   Event[]
+}
+
+model Subject {
+  id        String   @id @default(cuid())
+  // Each subject belongs to one user; deleting the user removes their data.
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  code      String?
+  color     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events Event[]
+
+  @@index([userId])
+}
+
+model Event {
+  id     String  @id @default(cuid())
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Optional link to a subject; if the subject is deleted the link is cleared.
+  subjectId String?
+  subject   Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+
+  title String
+  type  String // 'exam' | 'quiz' | 'homework' | 'other'
+  date  String // 'YYYY-MM-DD' (kept as a string to match the frontend)
+  time  String?
+  note  String?
+  done  Boolean @default(false)
+
+  // Smart Study Planner fields (used for exams)
+  chapters     Int?
+  difficulty   Int?
+  chaptersDone Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([subjectId])
+}
