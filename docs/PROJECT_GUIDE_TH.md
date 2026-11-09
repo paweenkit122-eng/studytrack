@@ -437,9 +437,11 @@ npm install && npm run dev                              # :5173
 - 📊 **สรุปสถิติ** เช่น สัปดาห์นี้มีกี่เดดไลน์ ทำเสร็จกี่ %
 - ✅ **ทำแล้ว:** unit/component test (Vitest) + CI (GitHub Actions) — ต่อยอดได้
   ด้วย E2E test (Playwright) หรือเพิ่ม coverage report
-- ✅ **ทำแล้ว:** Backend API (Phase 2, §12) + **เชื่อม frontend–backend แล้ว**
-  (§13: login/sync, offline↔cloud) — ต่อยอดได้: refresh token/httpOnly cookie,
-  แจ้งเตือน (Push API), analytics dashboard, deploy ขึ้นจริง (Vercel + Railway/Render)
+- ✅ **ทำแล้ว:** Backend API (Phase 2, §12) + **เชื่อม frontend–backend** (§13) +
+  **แจ้งเตือนก่อนสอบ** (Notification API, ตรรกะ `lib/reminders.ts` เป็น pure + มี
+  unit test — เตือนที่ 7/3/1/0 วัน แต่ละเกณฑ์ครั้งเดียว กันซ้ำด้วย localStorage)
+- ต่อยอดได้: Web **Push API** (เตือนตอนปิดแอป ต้องมี server + VAPID), refresh
+  token/httpOnly cookie, analytics dashboard, deploy ขึ้นจริง (Vercel + Render)
 - 🌐 ทำ **i18n** เพิ่มภาษาอื่น หรือดึงวันหยุด/ปฏิทินมหาวิทยาลัยมาแสดง
 
 เลือกทำสัก 1–2 ข้อแล้วเขียนไว้ใน README หัวข้อ "Roadmap" จะช่วยให้โปรเจกต์

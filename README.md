@@ -39,6 +39,8 @@ homework or things to review. Installable on your phone and **works offline**.
 - **Accounts & cloud sync** — optionally sign in (JWT) to sync your data across
   devices through the backend API; works fully offline when logged out, and
   uploads your offline data on first sign-in.
+- **Exam reminders** — opt-in browser notifications that alert you 7 / 3 / 1 / 0
+  days before each exam (permission-based; the scheduling logic is unit-tested).
 
 ---
 
