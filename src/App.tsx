@@ -13,6 +13,7 @@ import { useLanguage } from './context/LanguageContext'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { useAuth } from './hooks/useAuth'
 import { useStudyData } from './hooks/useStudyData'
+import { useReminders, notificationsSupported } from './hooks/useReminders'
 import { daysUntil } from './lib/dates'
 import type { EventType, StudyEvent, Subject } from './types'
 import type { TranslationKey } from './i18n/translations'
@@ -42,7 +43,11 @@ export default function App() {
   const [view, setView] = useLocalStorage<View>('studytrack.view2', 'all')
   const [collapsed, setCollapsed] = useLocalStorage('studytrack.collapsed', false)
   const [capacity, setCapacity] = useLocalStorage('studytrack.capacity', 4)
+  const [remindersEnabled, setRemindersEnabled] = useLocalStorage('studytrack.reminders', false)
   const [sidebarOpen, setSidebarOpen] = useState(isDesktop)
+
+  // Fire browser notifications for upcoming exams when enabled.
+  useReminders(events, remindersEnabled)
 
   const [showDone, setShowDone] = useState(false)
   const [editing, setEditing] = useState<StudyEvent | 'new' | null>(null)
@@ -97,6 +102,25 @@ export default function App() {
   const chooseView = (v: View) => {
     setView(v)
     if (!isDesktop()) setSidebarOpen(false)
+  }
+
+  const toggleReminders = async () => {
+    if (!notificationsSupported()) return
+    if (remindersEnabled) {
+      setRemindersEnabled(false)
+      return
+    }
+    if (Notification.permission === 'denied') {
+      alert(t('reminder.denied'))
+      return
+    }
+    if (Notification.permission === 'granted') {
+      setRemindersEnabled(true)
+      return
+    }
+    const res = await Notification.requestPermission()
+    if (res === 'granted') setRemindersEnabled(true)
+    else if (res === 'denied') alert(t('reminder.denied'))
   }
 
   const loading = study.status === 'loading'
@@ -177,6 +201,15 @@ export default function App() {
                       subject={hero?.subjectId ? subjectById[hero.subjectId] : undefined}
                     />
                     <div className="agenda-tools">
+                      {notificationsSupported() && (
+                        <button
+                          className="btn btn--ghost btn--sm"
+                          onClick={toggleReminders}
+                          aria-pressed={remindersEnabled}
+                        >
+                          {remindersEnabled ? '🔔' : '🔕'} {t('reminder.label')}
+                        </button>
+                      )}
                       <label className="switch">
                         <input
                           type="checkbox"

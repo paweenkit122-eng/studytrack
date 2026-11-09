@@ -24,6 +24,12 @@ export function daysUntil(iso: string): number {
   return Math.round(diff / msPerDay)
 }
 
+/** Whole days from one ISO date to another, both taken at local midnight. */
+export function daysBetween(fromISO: string, toISO: string): number {
+  const msPerDay = 1000 * 60 * 60 * 24
+  return Math.round((parseDate(toISO).getTime() - parseDate(fromISO).getTime()) / msPerDay)
+}
+
 /** Urgency bucket used to colour the countdown badge. */
 export type Urgency = 'overdue' | 'today' | 'soon' | 'upcoming' | 'far'
 

@@ -152,6 +152,14 @@ export const th = {
   'auth.synced': 'ซิงก์แล้ว',
   'auth.cloudError': 'ซิงก์ไม่สำเร็จ',
   'auth.retry': 'ลองใหม่',
+
+  // Exam reminders (browser notifications)
+  'reminder.label': 'เตือนสอบ',
+  'reminder.denied': 'การแจ้งเตือนถูกบล็อก — เปิดได้ในตั้งค่าเบราว์เซอร์',
+  'reminder.title': 'เตือนสอบ 📚',
+  'reminder.bodyDays': '{title} · อีก {n} วัน',
+  'reminder.bodyToday': '{title} · สอบวันนี้!',
+  'reminder.bodyTomorrow': '{title} · สอบพรุ่งนี้',
 } as const
 
 export type TranslationKey = keyof typeof th
@@ -291,6 +299,13 @@ export const en: Record<TranslationKey, string> = {
   'auth.synced': 'Synced',
   'auth.cloudError': 'Sync failed',
   'auth.retry': 'Retry',
+
+  'reminder.label': 'Reminders',
+  'reminder.denied': 'Notifications are blocked — enable them in browser settings',
+  'reminder.title': 'Exam reminder 📚',
+  'reminder.bodyDays': '{title} · in {n} days',
+  'reminder.bodyToday': '{title} · exam today!',
+  'reminder.bodyTomorrow': '{title} · exam tomorrow',
 }
 
 export const dictionaries = { th, en }
